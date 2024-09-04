@@ -18,7 +18,9 @@ services:
     #command: wikipedia_en_100_2020-08.zim
     #command: wikipedia_en_100_2020-08.zim wikipedia_en_all_maxi_2020-08.zim
     #command: phet_en_2020-08.zim wikinews_en_all_maxi_2020-08.zim wikiquote_en_all_maxi_2020-08.zim wikispecies_en_all_maxi_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikibooks_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wikisource_en_all_maxi_2020-07.zim wikiversity_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
-    command: phet_en_2020-08.zim
+    #command: phet_en_2020-08.zim
+    command: phet_en_2020-08.zim wikispecies_en_all_maxi_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
+
     volumes:
       - ./data:/data
       # - ./data/wikipedia_en_100_2020-08.zim:/data/wikipedia_en_100_2020-08.zim
