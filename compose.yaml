@@ -1,0 +1,27 @@
+x-app:
+  name: kiwix
+  title: Kiwix
+  description: |
+    Kiwix is an offline reader for online content like Wikipedia, Project Gutenberg, or TED Talks. 
+    It makes knowledge available to people with no or limited internet access. 
+    The software as well as the content is free to use for anyone.
+  category: education
+  url: https://www.kiwix.org
+  icon: kiwix.png
+  author: Koen Swings  # Who created this compose file? (not the app ;-)
+services:
+  kiwix:
+    image: kiwix/kiwix-serve:3.3.0
+    restart: no
+    pull_policy: never
+    #command: wikipedia_en_100_2020-08.zim
+    #command: wikipedia_en_100_2020-08.zim wikipedia_en_all_maxi_2020-08.zim
+    #command: phet_en_2020-08.zim wikinews_en_all_maxi_2020-08.zim wikiquote_en_all_maxi_2020-08.zim wikispecies_en_all_maxi_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikibooks_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wikisource_en_all_maxi_2020-07.zim wikiversity_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
+    command: phet_en_2020-08.zim
+    volumes:
+      - ./data:/data
+      # - ./data/wikipedia_en_100_2020-08.zim:/data/wikipedia_en_100_2020-08.zim
+      # - /media/data/kiwix/wikipedia_en_all_maxi_2020-08.zim:/data/wikipedia_en_all_maxi_2020-08.zim
+      # - /media/data/kiwix:/data
+    ports:
+      - ${port}:80
