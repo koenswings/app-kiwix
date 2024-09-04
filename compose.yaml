@@ -11,7 +11,8 @@ x-app:
   author: Koen Swings  # Who created this compose file? (not the app ;-)
 services:
   kiwix:
-    image: kiwix/kiwix-serve:3.3.0
+    #image: kiwix/kiwix-serve:3.3.0
+    image: grahamalderson/kiwix-serve
     restart: no
     pull_policy: never
     #command: wikipedia_en_100_2020-08.zim
