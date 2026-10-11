@@ -12,7 +12,7 @@ x-app:
   category: education
   icon: kiwix.png
   author: IDEA
-  version: 2d0c9ffea98f74a91ac4bcbeebcc9b06b733534c
+  version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
   instanceName: kiwix
 
 services:
