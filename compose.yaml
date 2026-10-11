@@ -23,13 +23,23 @@ services:
     image: ghcr.io/kiwix/kiwix-serve:3.8.2
     restart: no
     pull_policy: never
-    # ZIM selection: the image entrypoint (start.sh) runs
-    #   CMD="/usr/local/bin/kiwix-serve --port=$PORT $@"; $CMD
-    # unquoted, with WORKDIR /data, so "*.zim" is glob-expanded by the shell
-    # to every ZIM in /data. No file names are hard-coded: drop any ZIM into
-    # data/ and restart. With no ZIM present kiwix-serve exits with an error
-    # and start.sh lists /data in the log.
-    command: ["*.zim"]
+    # ZIM selection: serve every *.zim in /data. compose passes exec-form
+    # command args to start.sh without a shell, so a bare "*.zim" reaches
+    # kiwix-serve literally (idea: app-kiwix 1.0 bug on wizardly-hugle).
+    # Run our own shell instead: /bin/sh expands the glob, fails with a clear
+    # error if there is no ZIM, and execs kiwix-serve under dumb-init.
+    # ($$ is compose's escape for a literal $.)
+    entrypoint: ["/usr/bin/dumb-init", "--", "/bin/sh", "-c"]
+    command:
+      - |
+        set -- /data/*.zim
+        if [ ! -f "$$1" ]; then
+          echo "kiwix: ERROR: no .zim file in /data (the instance data/ folder). Add a ZIM file there and restart the app." >&2
+          echo "kiwix: contents of /data:" >&2; ls -la /data >&2
+          exit 1
+        fi
+        echo "kiwix: serving $$*"
+        exec /usr/local/bin/kiwix-serve --port=8080 "$$@"
     volumes:
       - ./data:/data:ro
     ports:

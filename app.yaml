@@ -15,7 +15,7 @@ services:
     notes: >
       1.0 compose.yaml uses the official multi-arch ghcr.io/kiwix/kiwix-serve:3.8.2
       directly (not yet retagged as koenswings/kiwix:1.0-3.8.2). It serves every
-      *.zim in ./data via the image's start.sh shell glob (see compose.yaml).
+      *.zim in ./data via a /bin/sh -c entrypoint that globs /data/*.zim (see compose.yaml).
     monitors:
       - kind: ghcr
         repo: kiwix/kiwix-serve
