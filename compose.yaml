@@ -1,30 +1,36 @@
 x-app:
   name: kiwix
   title: Kiwix
-  description: |
-    Kiwix is an offline reader for online content like Wikipedia, Project Gutenberg, or TED Talks. 
-    It makes knowledge available to people with no or limited internet access. 
-    The software as well as the content is free to use for anyone.
-  category: education
+  description: >
+    Kiwix is an offline reader for web content such as Wikipedia, Wiktionary,
+    Project Gutenberg and TED talks. It serves ZIM archives to any browser on
+    the school network, with full-text search, without internet access.
+
+    This app serves every *.zim file in the instance's data/ folder. Add or
+    replace ZIM files there and restart the app.
   url: https://www.kiwix.org
+  category: education
   icon: kiwix.png
-  author: Koen Swings  # Who created this compose file? (not the app ;-)
+  author: IDEA
+  version: VERSION_PLACEHOLDER
+  instanceName: kiwix
+
 services:
   kiwix:
-    #image: kiwix/kiwix-serve:3.3.0
-    image: grahamalderson/kiwix-serve
+    # Official multi-arch (arm64) kiwix-serve. Not yet retagged as
+    # koenswings/kiwix (see app.yaml). pull_policy never: the image must be
+    # present on the Engine before start (docker pull ghcr.io/kiwix/kiwix-serve:3.8.2).
+    image: ghcr.io/kiwix/kiwix-serve:3.8.2
     restart: no
     pull_policy: never
-    #command: wikipedia_en_100_2020-08.zim
-    #command: wikipedia_en_100_2020-08.zim wikipedia_en_all_maxi_2020-08.zim
-    #command: phet_en_2020-08.zim wikinews_en_all_maxi_2020-08.zim wikiquote_en_all_maxi_2020-08.zim wikispecies_en_all_maxi_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikibooks_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wikisource_en_all_maxi_2020-07.zim wikiversity_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
-    #command: phet_en_2020-08.zim
-    command: phet_en_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
-
+    # ZIM selection: the image entrypoint (start.sh) runs
+    #   CMD="/usr/local/bin/kiwix-serve --port=$PORT $@"; $CMD
+    # unquoted, with WORKDIR /data, so "*.zim" is glob-expanded by the shell
+    # to every ZIM in /data. No file names are hard-coded: drop any ZIM into
+    # data/ and restart. With no ZIM present kiwix-serve exits with an error
+    # and start.sh lists /data in the log.
+    command: ["*.zim"]
     volumes:
-      - ./data:/data
-      # - ./data/wikipedia_en_100_2020-08.zim:/data/wikipedia_en_100_2020-08.zim
-      # - /media/data/kiwix/wikipedia_en_all_maxi_2020-08.zim:/data/wikipedia_en_all_maxi_2020-08.zim
-      # - /media/data/kiwix:/data
+      - ./data:/data:ro
     ports:
-      - ${port}:80
+      - ${port}:8080
