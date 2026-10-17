@@ -3,6 +3,7 @@
 # (pulled if absent). Runs the REAL image through `docker compose up` with this
 # compose.yaml, as the Engine does: no overridden entrypoint, no fake binary.
 set -eu
+sh "$(dirname "$0")/title.sh"
 cd "$(dirname "$0")/.."
 ROOT=$(pwd); IMG=ghcr.io/kiwix/kiwix-serve:3.8.2; PORT=${KIWIX_TEST_PORT:-18481}
 pass=0; ok() { pass=$((pass+1)); echo "ok: $*"; }
