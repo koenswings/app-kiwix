@@ -14,6 +14,14 @@ x-app:
   author: IDEA
   version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
   instanceName: kiwix
+  # Backups leave out the ZIM archives (agent-engine-dev#241; needs that Engine change, inert without it).
+  # Paths are relative to the instance folder: ./data is mounted at /data and every data/*.zim is served.
+  # ZIMs are re-obtainable (Kiwix library, a peer or a disk) and large (simple Wikipedia ~3 GB, full ~100+ GB).
+  # Kept: everything else in data/ (e.g. the .zim.sha256 next to each ZIM), compose.yaml, .env.
+  # A restored Kiwix has no ZIM and exits with "ERROR: no .zim file in /data" until one is put back.
+  backup:
+    exclude:
+      - "data/*.zim"
 
 services:
   kiwix:
