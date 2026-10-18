@@ -12,7 +12,7 @@ x-app:
   category: education
   icon: kiwix.png
   author: IDEA
-  version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
+  version: ecf3dee1b5673ec603ea612f7108261cd7d49473
   instanceName: kiwix
   # Backups leave out the ZIM archives (agent-engine-dev#241; needs that Engine change, inert without it).
   # Paths are relative to the instance folder: ./data is mounted at /data and every data/*.zim is served.
