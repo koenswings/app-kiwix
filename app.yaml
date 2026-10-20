@@ -8,15 +8,16 @@ compatibility:
 services:
   - name: kiwix
     build: retag
-    upstream: kiwix/kiwix-serve
-    upstream_tag: "3.3.0"
+    upstream: ghcr.io/kiwix/kiwix-serve
+    upstream_tag: "3.8.2"
     image: koenswings/kiwix
-    current_version: "1.0-3.3.0"
+    current_version: "1.0-3.8.2"
     notes: >
-      Current compose.yaml uses unofficial image (grahamalderson/kiwix-serve).
-      Migrate to official kiwix/kiwix-serve on next update.
+      1.0 compose.yaml uses the official multi-arch ghcr.io/kiwix/kiwix-serve:3.8.2
+      directly (not yet retagged as koenswings/kiwix:1.0-3.8.2). It serves every
+      *.zim in ./data via a /bin/sh -c entrypoint that globs /data/*.zim (see compose.yaml).
     monitors:
-      - kind: dockerhub
+      - kind: ghcr
         repo: kiwix/kiwix-serve
         tag_pattern: "^\\d+\\.\\d+\\.\\d+$"
 

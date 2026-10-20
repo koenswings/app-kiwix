@@ -1,30 +1,46 @@
 x-app:
   name: kiwix
-  title: Kiwix
-  description: |
-    Kiwix is an offline reader for online content like Wikipedia, Project Gutenberg, or TED Talks. 
-    It makes knowledge available to people with no or limited internet access. 
-    The software as well as the content is free to use for anyone.
-  category: education
+  title: Wikipedia
+  description: >
+    Kiwix is an offline reader for web content such as Wikipedia, Wiktionary,
+    Project Gutenberg and TED talks. It serves ZIM archives to any browser on
+    the school network, with full-text search, without internet access.
+
+    This app serves every *.zim file in the instance's data/ folder. Add or
+    replace ZIM files there and restart the app.
   url: https://www.kiwix.org
+  category: education
   icon: kiwix.png
-  author: Koen Swings  # Who created this compose file? (not the app ;-)
+  author: IDEA
+  version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
+  instanceName: kiwix
+
 services:
   kiwix:
-    #image: kiwix/kiwix-serve:3.3.0
-    image: grahamalderson/kiwix-serve
+    # Official multi-arch (arm64) kiwix-serve. Not yet retagged as
+    # koenswings/kiwix (see app.yaml). pull_policy never: the image must be
+    # present on the Engine before start (docker pull ghcr.io/kiwix/kiwix-serve:3.8.2).
+    image: ghcr.io/kiwix/kiwix-serve:3.8.2
     restart: no
     pull_policy: never
-    #command: wikipedia_en_100_2020-08.zim
-    #command: wikipedia_en_100_2020-08.zim wikipedia_en_all_maxi_2020-08.zim
-    #command: phet_en_2020-08.zim wikinews_en_all_maxi_2020-08.zim wikiquote_en_all_maxi_2020-08.zim wikispecies_en_all_maxi_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikibooks_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wikisource_en_all_maxi_2020-07.zim wikiversity_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
-    #command: phet_en_2020-08.zim
-    command: phet_en_2020-08.zim wikivoyage_en_all_maxi_2020-08.zim wikipedia_en_all_maxi_2020-08.zim wiktionary_en_all_maxi_2020-08.zim
-
+    # ZIM selection: serve every *.zim in /data. compose passes exec-form
+    # command args to start.sh without a shell, so a bare "*.zim" reaches
+    # kiwix-serve literally (idea: app-kiwix 1.0 bug on wizardly-hugle).
+    # Run our own shell instead: /bin/sh expands the glob, fails with a clear
+    # error if there is no ZIM, and execs kiwix-serve under dumb-init.
+    # ($$ is compose's escape for a literal $.)
+    entrypoint: ["/usr/bin/dumb-init", "--", "/bin/sh", "-c"]
+    command:
+      - |
+        set -- /data/*.zim
+        if [ ! -f "$$1" ]; then
+          echo "kiwix: ERROR: no .zim file in /data (the instance data/ folder). Add a ZIM file there and restart the app." >&2
+          echo "kiwix: contents of /data:" >&2; ls -la /data >&2
+          exit 1
+        fi
+        echo "kiwix: serving $$*"
+        exec /usr/local/bin/kiwix-serve --port=8080 "$$@"
     volumes:
-      - ./data:/data
-      # - ./data/wikipedia_en_100_2020-08.zim:/data/wikipedia_en_100_2020-08.zim
-      # - /media/data/kiwix/wikipedia_en_all_maxi_2020-08.zim:/data/wikipedia_en_all_maxi_2020-08.zim
-      # - /media/data/kiwix:/data
+      - ./data:/data:ro
     ports:
-      - ${port}:80
+      - ${port}:8080
