@@ -1,6 +1,6 @@
 x-app:
   name: kiwix
-  title: Kiwix
+  title: Wikipedia
   description: >
     Kiwix is an offline reader for web content such as Wikipedia, Wiktionary,
     Project Gutenberg and TED talks. It serves ZIM archives to any browser on
