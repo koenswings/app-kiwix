@@ -14,6 +14,15 @@ x-app:
   author: IDEA
   version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
   instanceName: kiwix
+  # updateApp (idea#351, agent-app-dev#23). healthTimeout in seconds: placeholder 600 (10 min)
+  # until the #351 first-start timings are in.
+  healthCheck:
+    path: /
+  healthTimeout: 600
+  updatesFrom: []
+  migrationNote: Kiwix keeps its ZIM files; nothing in them is changed by an update.
+  snapshotExclude:
+    - data                   # ZIM files only, mounted read-only: an update never changes them
 
 services:
   kiwix:
