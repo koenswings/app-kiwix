@@ -14,8 +14,8 @@ x-app:
   author: IDEA
   version: 3b6a8a87df485dcd28e2a9eafb665bb4a29b3ba0
   instanceName: kiwix
-  # updateApp (idea#351, agent-app-dev#23). healthTimeout in seconds: placeholder 600 (10 min)
-  # until the #351 first-start timings are in.
+  # updateApp (idea#351, agent-app-dev#23). healthTimeout: integer seconds.
+  # No migration (ZIM files only): default 600 s.
   healthCheck:
     path: /
   healthTimeout: 600
