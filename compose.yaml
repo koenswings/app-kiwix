@@ -53,3 +53,11 @@ services:
       - ./data:/data:ro
     ports:
       - ${port}:8080
+    # Docker health (same path as x-app healthCheck). The image is minimal but has busybox wget.
+    # Kiwix starts in seconds and has no migration; start_period well inside healthTimeout 600.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
