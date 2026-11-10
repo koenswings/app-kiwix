@@ -2,6 +2,9 @@
 # Prepare the access-log directory and drop files older than 14 days, then start nginx.
 set -eu
 mkdir -p /logs
+# access_log with variables tests prefix/html (/etc/nginx/html) and will not
+# write the dated JSON file if that directory is missing (idea#416 on idea03).
+mkdir -p /etc/nginx/html
 # nginx workers (uid nginx) must be able to write the daily JSON logs.
 if id nginx >/dev/null 2>&1; then
   chown -R nginx:nginx /logs 2>/dev/null || chmod 0777 /logs
