@@ -142,13 +142,13 @@ function is_media(uri,   ext) {
   return ext ~ /^(jpg|jpeg|png|gif|svg|webp|ico|bmp|mp3|mp4|webm|ogg|wav|avi|mov|css|js|mjs|woff|woff2|ttf|eot|map|wasm|iso)$/
 }
 function is_dropped(uri) {
-  return uri ~ /^\/skin(\/|$)/ || uri ~ /^\/catalog(\/|$)/ || uri ~ /^\/suggest(\/|$)/ || uri ~ /^\/search(\/|$)/ || uri ~ /^\/raw\/[^/]+\/meta(\/|$)/
+  return uri ~ /^\/skin(\/|$)/ || uri ~ /^\/catalog(\/|$)/ || uri ~ /^\/suggest(\/|$)/ || uri ~ /^\/search(\/|$)/ || uri ~ "^/raw/[^/]+/meta(/|$)"
 }
 function is_legacy(uri) {
-  return uri ~ /^\/A\// || uri ~ /^\/[^/]+\/A\//
+  return uri ~ /^\/A\// || uri ~ "^/[^/]+/A/"
 }
 function is_content(uri) {
-  return uri ~ /^\/content\// || uri ~ /^\/raw\/[^/]+\/content\//
+  return uri ~ /^\/content\// || uri ~ "^/raw/[^/]+/content/"
 }
 function article_of(uri,   rest, n, parts, i, out) {
   rest = uri
@@ -159,12 +159,12 @@ function article_of(uri,   rest, n, parts, i, out) {
     for (i = 2; i <= n; i++) out = out (i == 2 ? "" : "/") parts[i]
     return out
   }
-  if (match(rest, /^\/raw\/[^/]+\/content\//)) {
+  if (match(rest, "^/raw/[^/]+/content/")) {
     rest = substr(rest, RLENGTH + 1)
     return rest
   }
   if (rest ~ /^\/A\//) return substr(rest, 4)
-  if (match(rest, /^\/[^/]+\/A\//)) return substr(rest, RLENGTH + 1)
+  if (match(rest, "^/[^/]+/A/")) return substr(rest, RLENGTH + 1)
   return rest
 }
 function prettify(s) {
