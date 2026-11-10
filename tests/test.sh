@@ -17,20 +17,29 @@ trap cleanup EXIT
 cfg=$(port=18480 docker compose -f compose.yaml config --format json)
 echo "$cfg" | python3 -c '
 import json,sys
-c=json.loads(sys.stdin.read(),strict=False)["services"]["kiwix"]
+svcs=json.loads(sys.stdin.read(),strict=False)["services"]
+c=svcs["kiwix"]
 assert c["image"]=="ghcr.io/kiwix/kiwix-serve:3.8.2@sha256:e478554a9920412eeb5ce1d73f24e4b28445ebed233187cdd03c623c32be46a5", c["image"]
 assert c["pull_policy"]=="never"
 assert c["entrypoint"]==["/usr/bin/dumb-init","--","/bin/sh","-c"], c["entrypoint"]
 assert "/data/*.zim" in c["command"][0] and "exec /usr/local/bin/kiwix-serve" in c["command"][0], c["command"]
 v=c["volumes"][0]; assert v["target"]=="/data" and v.get("read_only") is True, v
-p=c["ports"][0]; assert str(p["published"])=="18480" and p["target"]==8080, p
+assert not c.get("ports"), c.get("ports")
+px=svcs["proxy"]
+assert px["image"].startswith("nginx:1.28-alpine@sha256:a8b39bd9"), px["image"]
+assert px["pull_policy"]=="never"
+p=px["ports"][0]; assert str(p["published"])=="18480" and p["target"]==8080, p
 ' || fail "compose config contract"
-ok "compose config valid (image, pull_policy, shell entrypoint, ro volume, port)"
+ok "compose config valid (kiwix internal, proxy publishes port, images pinned)"
 grep -q 'duration' compose.yaml && fail "fixture text left in compose.yaml"
 ok "no duration-fixture leftovers"
 
 docker image inspect $IMG >/dev/null 2>&1 || docker pull -q $IMG >/dev/null
-cp compose.yaml "$t/"; mkdir "$t/data"
+NGINX_IMG=nginx:1.28-alpine
+docker image inspect $NGINX_IMG >/dev/null 2>&1 || docker pull -q $NGINX_IMG >/dev/null
+cp compose.yaml "$t/"
+cp -a proxy hooks "$t/"
+mkdir -p "$t/data" "$t/logs"
 
 # 2. no ZIM: container exits non-zero with a clear error
 : > "$t/data/notes.txt"
