@@ -7,10 +7,16 @@ logs. ZIM files are re-downloadable from the Kiwix library and can be many GB, s
 fill the Backup Disk with content that is not school data. The access logs in `logs/` only feed
 the usage hook (`docs/usage-hook.md`), which the Engine reads every day.
 
-**What the Engine does** for a `backupApp` of Kiwix: no borg run, no lock, no stop, no hooks, no
-cleanup and no `lastBackup`. The operation is Done with `args.hookResult: 'none'` and
-`lastResult {method: none, result: OK}`. `exclude`, `hookExclude`, `preHook`, `postHook` and
-`verify` are not used (agent-app-dev check-compose rejects the hook keys with method none).
+**What the Engine does** for a `backupApp` of Kiwix: no borg run, no borg lock file on the Backup
+Disk, no stop, no hooks, no cleanup and no `lastBackup`. The instance and Backup Disk resource
+locks are still taken for the run. The operation is Done with `args.hookResult: 'none'` and
+`lastResult {method: none, result: OK}`.
+
+agent-app-dev check-compose rejects `preHook`, `postHook` and `hookExclude` with method none.
+`exclude`, `verify`, `hookTimeout` and `fallback` are accepted but unused; Kiwix sets none of them.
+
+**Major updates:** with method none there is never a `lastBackup`, so a major `updateApp` is
+exempt from `NEEDS_BACKUP`; `--allow-major` is still needed (and the new version's `updatesFrom`).
 
 **Recovery** after a lost disk: install Kiwix again and copy the ZIM files back into `data/`.
 
