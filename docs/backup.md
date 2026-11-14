@@ -15,8 +15,9 @@ locks are still taken for the run. The operation is Done with `args.hookResult: 
 agent-app-dev check-compose rejects `preHook`, `postHook` and `hookExclude` with method none.
 `exclude`, `verify`, `hookTimeout` and `fallback` are accepted but unused; Kiwix sets none of them.
 
-**Major updates:** with method none there is never a `lastBackup`, so a major `updateApp` is
-exempt from `NEEDS_BACKUP`; `--allow-major` is still needed (and the new version's `updatesFrom`).
+**Major updates:** the installed compose declares method none, so a major `updateApp` never
+refuses `NEEDS_BACKUP` (Engine `UpdateAppPolicy.ts`, main 64a4b35); `--allow-major` is still
+needed (and the new version's `updatesFrom`). The Engine shows the method as `Instance.backupMethod: none`.
 
 **Recovery** after a lost disk: install Kiwix again and copy the ZIM files back into `data/`.
 
