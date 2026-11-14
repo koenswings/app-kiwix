@@ -17,7 +17,8 @@ trap cleanup EXIT
 cfg=$(port=18480 docker compose -f compose.yaml config --format json)
 echo "$cfg" | python3 -c '
 import json,sys
-svcs=json.loads(sys.stdin.read(),strict=False)["services"]
+doc=json.loads(sys.stdin.read(),strict=False); svcs=doc["services"]
+assert doc["x-app"]["backup"]=={"method":"none"}, doc["x-app"].get("backup")
 c=svcs["kiwix"]
 assert c["image"]=="ghcr.io/kiwix/kiwix-serve:3.8.2@sha256:e478554a9920412eeb5ce1d73f24e4b28445ebed233187cdd03c623c32be46a5", c["image"]
 assert c["pull_policy"]=="never"
