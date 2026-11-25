@@ -1,6 +1,14 @@
 # app-kiwix
 Compose file for the Kiwix app
 
+ZIM files live in the instance `./data` folder (bind-mounted read-only at
+`/data`). App data uses this relative `./data` bind, never a Docker named
+volume ([idea#141](https://github.com/koenswings/idea/issues/141)). Access logs
+go to a separate `./logs` bind (not under `./data`; see
+[docs/usage-hook.md](docs/usage-hook.md)). `x-app.backup.method` is `none` and
+`snapshotExclude` is `data`, so updates leave the ZIM files in place
+([docs/backup.md](docs/backup.md)).
+
 ## 1.0
 
 - Image: official `ghcr.io/kiwix/kiwix-serve:3.8.2` (multi-arch, arm64), `pull_policy: never`, so pre-pull it on the Engine.
