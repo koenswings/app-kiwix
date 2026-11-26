@@ -1,7 +1,18 @@
 # app-kiwix
 Compose file for the Kiwix app
 
-## 1.0
+ZIM files live in the instance `./data` folder (bind-mounted read-only at
+`/data`). App data uses this relative `./data` bind, never a Docker named
+volume ([idea#141](https://github.com/koenswings/idea/issues/141)). Access logs
+go to a separate `./logs` bind (not under `./data`; see
+[docs/usage-hook.md](docs/usage-hook.md)). `x-app.backup.method` is `none` and
+`snapshotExclude` is `data`, so updates leave the ZIM files in place
+([docs/backup.md](docs/backup.md)).
+
+## Current release: 1.3-3.8.2
+
+Current `x-app.version` and git tag: `1.3-3.8.2` (the image remains official `ghcr.io/kiwix/kiwix-serve:3.8.2`). A GitHub Release named “Zimbabwe delivery 20 Oct 2026” exists as tag `zimbabwe-2026-10-20`; that is a kit delivery tag, not a later App version.
+
 
 - Image: official `ghcr.io/kiwix/kiwix-serve:3.8.2` (multi-arch, arm64), `pull_policy: never`, so pre-pull it on the Engine.
 - Content: every `*.zim` in the instance `data/` folder is served (mounted read-only at `/data`). compose.yaml runs `/bin/sh -c` (under dumb-init) to expand `/data/*.zim` and exec kiwix-serve; with no ZIM the container exits with `ERROR: no .zim file in /data`. To change content, add, remove or rename ZIM files and restart. No env var is needed for ZIM names.
